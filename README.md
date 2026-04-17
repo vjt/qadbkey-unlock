@@ -17,19 +17,27 @@ https://onecompiler.com/python/3znepjcsq
 Your adb unlock key command will be generated under output
 
 
-Alternatively, download and run the script from an environment that supports python3 and crypt with the following command:
+Alternatively, download and run the script locally. Python 3.13 removed
+the stdlib `crypt` module, so we install the drop-in replacement
+[`legacycrypt`](https://pypi.org/project/legacycrypt/) in a venv:
 
 ```sh
-$ python3 /path/to/qadbkey-unlock2.py
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+
+python3 qadbkey-unlock2.py              # prompts for challenge
+python3 qadbkey-unlock2.py 29501379     # or pass it as an arg
 ```
 
+Older Pythons (<= 3.12) ship `crypt` in stdlib — the venv step is still
+recommended but `requirements.txt` becomes a no-op.
+
 Example:
-* In this example the script exits in the users home directory 
 ```sh
-user@linuxcomputer:~$ python3 qadbkey-unlock2.py
+(.venv) user@host:~$ python3 qadbkey-unlock2.py
 Enter the AT+QADBKEY? response: 12345678
 AT+QADBKEY="0jXKXQwSwMxYoeg"
-
 ```
 
 ### Original Contributors
