@@ -8,6 +8,37 @@ Modified by [carp4](https://github.com/carp4) to allow AT+QADBKEY? to be entered
 
 Modified by [iamromulan](https://github.com/iamromulan) to remove the sudo reqirement and query the user to input the AT+QADBKEY? response from the modem.
 
+### Full ADB Unlock Sequence
+
+After generating the key, the full sequence on the modem is:
+
+```
+# 1. Get the challenge
+AT+QADBKEY?
++QADBKEY: 12345678
+
+# 2. Generate the response (this tool), then submit it
+AT+QADBKEY="0jXKXQwSwMxYoeg"
+OK
+
+# 3. Check current USB composition
+AT+QCFG="usbcfg"
++QCFG: "usbcfg",0x2C7C,0x0801,1,1,1,1,1,0,0
+
+# 4. Enable ADB interface (flip the penultimate field from 0 to 1)
+AT+QCFG="usbcfg",0x2C7C,0x0801,1,1,1,1,1,1,0
+
+# 5. Reboot the modem for the composition change to take effect
+AT+CFUN=1,1
+```
+
+Field order for `AT+QCFG="usbcfg"`: `VID, PID, DIAG, NMEA, AT, MODEM, NET, ADB, UAC`.
+The only change is the `ADB` field (penultimate): `0` → `1`.
+
+After reboot, `adb devices` should see the modem. See
+[natecarlson's guide](https://github.com/natecarlson/quectel-rgmii-configuration-notes#getting-adb-access)
+for the full context.
+
 ### How To Use
 * To use this script, simply go to the following URL:
 https://onecompiler.com/python/3znepjcsq
